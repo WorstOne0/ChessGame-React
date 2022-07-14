@@ -17,111 +17,211 @@ import blackKnight from "../../assets/black_knight.svg";
 import whitePawn from "../../assets/white_pawn.svg";
 import blackPawn from "../../assets/black_pawn.svg";
 
-const Piece = ({ piece, row, column }) => {
+const Piece = ({ piece }) => {
   return (
     <S.Container>
-      {piece === "K" && <King color="white" row={row} column={column} />}
-      {piece === "k" && <King color="black" row={row} column={column} />}
+      {piece.type === "king" && <King piece={piece} />}
 
-      {piece === "Q" && <Queen color="white" row={row} column={column} />}
-      {piece === "q" && <Queen color="black" row={row} column={column} />}
+      {piece.type === "queen" && <Queen piece={piece} />}
 
-      {piece === "R" && <Rook color="white" row={row} column={column} />}
-      {piece === "r" && <Rook color="black" row={row} column={column} />}
+      {piece.type === "rook" && <Rook piece={piece} />}
 
-      {piece === "B" && <Bishop color="white" row={row} column={column} />}
-      {piece === "b" && <Bishop color="black" row={row} column={column} />}
+      {piece.type === "bishop" && <Bishop piece={piece} />}
 
-      {piece === "N" && <Knight color="white" row={row} column={column} />}
-      {piece === "n" && <Knight color="black" row={row} column={column} />}
+      {piece.type === "knight" && <Knight piece={piece} />}
 
-      {piece === "P" && <Pawn color="white" row={row} column={column} />}
-      {piece === "p" && <Pawn color="black" row={row} column={column} />}
+      {piece.type === "pawn" && <Pawn piece={piece} />}
 
-      {piece === null && <Empty color={null} row={row} column={column} />}
+      {piece.type === "empty" && <Empty piece={piece} />}
     </S.Container>
   );
 };
 
-const King = ({ color, row, column }) => {
+const King = ({ piece }) => {
   const dispacth = useDispatch();
+  const { moves } = useSelector((state) => state.gameState);
+
+  const { color, row, column, settings } = piece;
 
   return (
     <S.Svg
       src={color === "white" ? whiteKing : blackKing}
       draggable="false"
-      onClick={() => dispacth(move({ row, column, color }))}
+      background={
+        moves.filter((move) => move.row === row && move.column === column)
+          .length !== 0
+      }
+      onClick={() =>
+        dispacth(
+          move({
+            type: "king",
+            row,
+            column,
+            color,
+            settings,
+          })
+        )
+      }
     />
   );
 };
 
-const Queen = ({ color, row, column }) => {
+const Queen = ({ piece }) => {
   const dispacth = useDispatch();
+  const { moves } = useSelector((state) => state.gameState);
+
+  const { color, row, column, settings } = piece;
 
   return (
     <S.Svg
       src={color === "white" ? whiteQueen : blackQueen}
       draggable="false"
-      onClick={() => dispacth(move({ row, column, color }))}
+      background={
+        moves.filter((move) => move.row === row && move.column === column)
+          .length !== 0
+      }
+      onClick={() =>
+        dispacth(
+          move({
+            type: "queen",
+            row,
+            column,
+            color,
+            settings,
+          })
+        )
+      }
     />
   );
 };
 
-const Rook = ({ color, row, column }) => {
+const Rook = ({ piece }) => {
   const dispacth = useDispatch();
+  const { moves } = useSelector((state) => state.gameState);
+
+  const { color, row, column, settings } = piece;
 
   return (
     <S.Svg
       src={color === "white" ? whiteRook : blackRook}
       draggable="false"
-      onClick={() => dispacth(move({ row, column, color }))}
+      background={
+        moves.filter((move) => move.row === row && move.column === column)
+          .length !== 0
+      }
+      onClick={() =>
+        dispacth(
+          move({
+            type: "rook",
+            row,
+            column,
+            color,
+            settings,
+          })
+        )
+      }
     />
   );
 };
 
-const Bishop = ({ color, row, column }) => {
+const Bishop = ({ piece }) => {
   const dispacth = useDispatch();
+  const { moves } = useSelector((state) => state.gameState);
+
+  const { color, row, column, settings } = piece;
 
   return (
     <S.Svg
       src={color === "white" ? whiteBishop : blackBishop}
       draggable="false"
-      onClick={() => dispacth(move({ row, column, color }))}
+      background={
+        moves.filter((move) => move.row === row && move.column === column)
+          .length !== 0
+      }
+      onClick={() =>
+        dispacth(
+          move({
+            type: "bishop",
+            row,
+            column,
+            color,
+            settings,
+          })
+        )
+      }
     />
   );
 };
 
-const Knight = ({ color, row, column }) => {
+const Knight = ({ piece }) => {
   const dispacth = useDispatch();
+  const { moves } = useSelector((state) => state.gameState);
+
+  const { color, row, column, settings } = piece;
 
   return (
     <S.Svg
       src={color === "white" ? whiteKnight : blackKnight}
       draggable="false"
-      onClick={() => dispacth(move({ row, column, color }))}
+      background={
+        moves.filter((move) => move.row === row && move.column === column)
+          .length !== 0
+      }
+      onClick={() =>
+        dispacth(
+          move({
+            type: "knight",
+            row,
+            column,
+            color,
+            settings,
+          })
+        )
+      }
     />
   );
 };
 
-const Pawn = ({ color, row, column }) => {
+const Pawn = ({ piece }) => {
   const dispacth = useDispatch();
-  const [hasMoved, setHasMoved] = useState(false);
+  const { moves } = useSelector((state) => state.gameState);
 
-  const possibleMoves = () => {};
+  const { type, color, row, column, settings } = piece;
 
   return (
     <S.Svg
       src={color === "white" ? whitePawn : blackPawn}
       draggable="false"
-      onClick={() => dispacth(move({ row, column, color }))}
+      background={
+        moves.filter((move) => move.row === row && move.column === column)
+          .length !== 0
+      }
+      onClick={() =>
+        dispacth(
+          move({
+            type,
+            row,
+            column,
+            color,
+            settings,
+          })
+        )
+      }
     />
   );
 };
 
-const Empty = ({ color, row, column }) => {
+const Empty = ({ piece }) => {
   const dispacth = useDispatch();
+  const { moves } = useSelector((state) => state.gameState);
+
+  const { color, row, column } = piece;
+
   return (
-    <S.EmptyContainer onClick={() => dispacth(move({ row, column, color }))} />
+    <S.EmptyContainer onClick={() => dispacth(move({ row, column, color }))}>
+      {moves.filter((move) => move.row === row && move.column === column)
+        .length !== 0 && <S.EmptyDot />}
+    </S.EmptyContainer>
   );
 };
 

@@ -10,4 +10,6 @@ export const Container = styled.div`
   align-items: center;
 
   color: var(--color-primary);
+
+  ${(props) => props.isSelected && `box-shadow:inset 0 0 0 0.3rem #fff;`}
 `;

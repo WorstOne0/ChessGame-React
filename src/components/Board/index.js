@@ -12,14 +12,15 @@ const Board = ({ height = "90rem", width = "90rem" }) => {
     <S.Container height={height} width={width}>
       {board.map((row, indexRow) => (
         <S.Row height="12.5%">
-          {row.map((column, indexCell) => (
+          {row.map((piece, indexColumn) => (
             <Cell
               backgroundColor={
-                (indexRow + indexCell + 1) % 2 === 0 ? "#333031" : "#ECDDE0"
+                (indexRow + indexColumn + 1) % 2 === 0 ? "#333031" : "#ECDDE0"
               }
-            >
-              <Piece piece={column} row={indexRow} column={indexCell} />
-            </Cell>
+              piece={piece}
+              row={indexRow}
+              column={indexColumn}
+            ></Cell>
           ))}
         </S.Row>
       ))}

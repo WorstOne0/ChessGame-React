@@ -1,32 +1,39 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-  board: [
-    ["r", "n", "b", "q", "k", "b", "n", "r"],
-    ["p", "p", "p", "p", "p", "p", "p", "p"],
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    ["P", "P", "P", "P", "P", "P", "P", "P"],
-    ["R", "N", "B", "Q", "K", "B", "N", "R"],
-  ],
+import { buildBoard } from "../utils/pieces";
+import { legalMoves } from "../utils/moves";
 
-  player: "white",
-  opponent: "black",
+console.log(buildBoard());
+
+const initialState = {
+  board: buildBoard(),
+
+  // board: [
+  //   ["r", "n", "b", "q", "k", "b", "n", "r"],
+  //   ["p", "p", "p", "p", "p", "p", "p", "p"],
+  //   [null, null, null, null, null, null, null, null],
+  //   [null, null, null, null, null, null, null, null],
+  //   [null, null, null, null, null, null, null, null],
+  //   [null, null, null, null, null, null, null, null],
+  //   ["P", "P", "P", "P", "P", "P", "P", "P"],
+  //   ["R", "N", "B", "Q", "K", "B", "N", "R"],
+  // ],
+
+  player: { color: "white", helper: 1 },
+  opponent: { color: "black", helper: -1 },
 
   from: {
     row: null,
     column: null,
-    color: null,
   },
   to: {
     row: null,
     column: null,
-    color: null,
   },
   isFromSet: false,
   isMovable: false,
+
+  moves: [],
 };
 
 export const boardSlice = createSlice({
@@ -34,32 +41,78 @@ export const boardSlice = createSlice({
   initialState,
   reducers: {
     move: (state, action) => {
-      const { row, column, color } = action.payload;
+      const { type, row, column, color, settings } = action.payload;
 
-      if (color === state.player) {
-        state.from = { row, column, color };
+      if (color === state.player.color) {
+        state.from = { row, column };
         state.isFromSet = true;
+
+        state.moves = legalMoves(
+          type,
+          state.board,
+          color,
+          state.opponent.color,
+          row,
+          column,
+          settings
+        );
       }
 
-      if (color === null || color === state.opponent) {
-        state.to = { row, column, color };
+      if (color === null || color === state.opponent.color) {
+        if (
+          state.moves.filter(
+            (move) => move.row === row && move.column === column
+          ).length !== 0
+        ) {
+          state.to = { row, column };
 
-        state.isMovable = state.isFromSet;
+          state.isMovable = state.isFromSet;
+        } else {
+          state.from = { row: null, column: null };
+          state.isFromSet = false;
+          state.moves = [];
+        }
       }
 
       if (state.isMovable) {
         state.board[state.to.row][state.to.column] =
           state.board[state.from.row][state.from.column];
-        state.board[state.from.row][state.from.column] = null;
+        state.board[state.from.row][state.from.column] = {
+          type: "empty",
+          row: state.from.row,
+          column: state.from.column,
+          color: null,
 
-        state.player = state.player === "white" ? "black" : "white";
-        state.opponent = state.player === "white" ? "black" : "white";
+          settings: {},
+        };
+
+        state.board[state.to.row][state.to.column].row = state.to.row;
+        state.board[state.to.row][state.to.column].column = state.to.column;
+
+        if (state.board[state.to.row][state.to.column].type === "pawn")
+          state.board[state.to.row][state.to.column].settings.hasMoved = true;
+
+        state.player = {
+          color: state.player.color === "white" ? "black" : "white",
+          helper: state.player.helper * -1,
+        };
+        state.opponent = {
+          color: state.opponent.color === "white" ? "black" : "white",
+          helper: state.opponent.helper * -1,
+        };
+
+        state.movedPiece = {
+          row: state.from.row,
+          column: state.from.column,
+          action: "moved",
+        };
 
         state.from = { row: null, column: null, color: null };
         state.to = { row: null, column: null, color: null };
 
         state.isFromSet = false;
         state.isMovable = false;
+        state.moves = [];
       }
     },
   },
