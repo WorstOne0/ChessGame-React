@@ -157,6 +157,30 @@ const queenMoves = (board, color, opponentColor, row, column) => {
   return moves;
 };
 
+const kingMoves = (board, color, row, column) => {
+  const moves = [];
+
+  const rowMoves = [-1, 0, 1, 0, -1, -1, 1, 1];
+  const columnMoves = [0, 1, 0, -1, -1, 1, -1, 1];
+
+  for (let i = 0; i < rowMoves.length; i++) {
+    let newRow = row + rowMoves[i];
+    let newColumn = column + columnMoves[i];
+
+    if (
+      newRow >= 0 &&
+      newRow < 8 &&
+      newColumn >= 0 &&
+      newColumn < 8 &&
+      board[newRow][newColumn].color !== color
+    ) {
+      moves.push({ row: newRow, column: newColumn });
+    }
+  }
+
+  return moves;
+};
+
 const legalMoves = (
   type,
   board,
@@ -179,6 +203,8 @@ const legalMoves = (
 
   if (type === "queen")
     return queenMoves(board, color, opponentColor, row, column);
+
+  if (type === "king") return kingMoves(board, color, row, column);
 
   return [];
 };

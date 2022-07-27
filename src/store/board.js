@@ -3,8 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import { buildBoard } from "../utils/pieces";
 import { legalMoves } from "../utils/moves";
 
-console.log(buildBoard());
-
 const initialState = {
   board: buildBoard(),
 
@@ -22,10 +20,12 @@ const initialState = {
   player: { color: "white", helper: 1 },
   opponent: { color: "black", helper: -1 },
 
+  // Selected piece
   from: {
     row: null,
     column: null,
   },
+  // Sqaure to move to
   to: {
     row: null,
     column: null,
@@ -33,6 +33,7 @@ const initialState = {
   isFromSet: false,
   isMovable: false,
 
+  // Legal moves from selected piece
   moves: [],
 };
 
